@@ -1,4 +1,6 @@
 #include "Map.h"
+#include "Enemy.h"
+#include "TimeManager.h"
 
 /// <summary>
 /// Sets the needed variables
@@ -19,6 +21,9 @@ void Draw();
 
 enum USER_INPUTS { NONE, UP, DOWN, RIGHT, LEFT, QUIT };
 Map pacman_map = Map();
+
+Enemy enemy1 = Enemy(pacman_map.spawn_enemy);
+
 char player_char = 'O';
 int player_x = 1;
 int player_y = 1;
@@ -41,6 +46,9 @@ int main()
 void Setup()
 {
     std::cout.sync_with_stdio(false);
+
+    srand(time(NULL)); /* Creating a random seed */
+    
     player_x = pacman_map.spawn_player.X;
     player_y = pacman_map.spawn_player.Y;
 }
@@ -133,6 +141,19 @@ void Logic()
         {
             win = true;
         }
+        Enemy::ENEMY_STATE enemy1state = enemy1.Update(&pacman_map, { (short)player_x, (short)player_y });
+        switch (enemy1state)
+        {
+        case Enemy::ENEMY_KILLED:
+            player_points += 50;
+            break;
+        case Enemy::ENEMY_DEAD:
+            player_x = pacman_map.spawn_player.X;
+            player_y = pacman_map.spawn_player.Y;
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -143,6 +164,9 @@ void Draw()
     ConsoleUtils::Console_SetPos(player_x, player_y);
     ConsoleUtils::Console_SetColor(ConsoleUtils::CONSOLE_COLOR::DARK_YELLOW);
     std::cout << player_char;
+
+    enemy1.Draw();
+
     ConsoleUtils::Console_ClearCharacter({ 0,(short)pacman_map.Height });
     ConsoleUtils::Console_SetColor(ConsoleUtils::CONSOLE_COLOR::CYAN);
     std::cout << "Puntuacion actual: " << player_points << " Puntuacion pendiente: " << pacman_map.points << std::endl;
@@ -151,4 +175,6 @@ void Draw()
         ConsoleUtils::Console_SetColor(ConsoleUtils::CONSOLE_COLOR::GREEN);
         std::cout << "Has ganado!" << std::endl;
     }
+
+    TimeManager::getInstance().NextFrame();
 }
