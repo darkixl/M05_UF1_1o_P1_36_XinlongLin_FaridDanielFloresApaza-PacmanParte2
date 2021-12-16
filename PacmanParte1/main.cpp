@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "Enemy.h"
+#include "TimeManager.h"
 
 /// <summary>
 /// Sets the needed variables
@@ -45,6 +46,9 @@ int main()
 void Setup()
 {
     std::cout.sync_with_stdio(false);
+
+    srand(time(NULL)); /* Creating a random seed */
+    
     player_x = pacman_map.spawn_player.X;
     player_y = pacman_map.spawn_player.Y;
 }
@@ -171,4 +175,6 @@ void Draw()
         ConsoleUtils::Console_SetColor(ConsoleUtils::CONSOLE_COLOR::GREEN);
         std::cout << "Has ganado!" << std::endl;
     }
+
+    TimeManager::getInstance().NextFrame();
 }
