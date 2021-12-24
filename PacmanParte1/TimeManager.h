@@ -7,8 +7,8 @@ public:
 	unsigned int frameCount;
 	float time;
 	float deltaTime;
-
-	static TimeManager getInstance();
+	const float number = 1000;
+	static TimeManager& getInstance();
 
 	void NextFrame();
 };
